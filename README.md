@@ -24,16 +24,16 @@ Baylor — Data Pipeline + Database
 [X] Create python/combine_data.py
 [X] Generate data/cleaned/football_stats_combined.csv
 [X] Add/verify wins, losses, win_pct
-[ ] Create SQL schema in sql/01_create_schema.sql
-[ ] Create SQL loading script in sql/02_load_data.sql
-[ ] Create SQL cleaning/validation script in sql/03_clean_data.sql
-[ ] Create the 2 main complex SQL queries in sql/04_complex_queries.sql
-[ ] Export query outputs into data/outputs/
+[X] Create SQL schema in sql/01_create_schema.sql
+[X] Create SQL loading script in sql/02_load_data.sql
+[X] Create SQL cleaning/validation script in sql/03_clean_data.sql
+[X] Create the 2 main complex SQL queries in sql/04_complex_queries.sql
+[X] Export query outputs into data/outputs/
 
 Hall — Analysis + Presentation
-[ ] Create python/analyze_data.py
-[ ] Generate charts into figures/
-[ ] Create schema diagram in figures/
+[X] Create python/analyze_data.py
+[X] Generate charts into figures/
+[X] Create schema diagram in figures/
 [ ] Help write README.md
 [ ] Help write Artifact Self-Assessment answers
 [ ] Build lightning talk slides
@@ -41,7 +41,7 @@ Hall — Analysis + Presentation
 
 Both
 [ ] Decide final project conclusions
-[ ] Review missing/null data
+[X] Review missing/null data
 [ ] Practice 5-minute lightning talk
 [ ] Confirm all required artifacts are included
 [ ] Zip final submission folder
