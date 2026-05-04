@@ -80,23 +80,19 @@ SELECT
 FROM correlations
 ORDER BY correlation_rank;
 
-
-
 CREATE VIEW game_trends_2015_2025 AS
 WITH yearly AS (
     SELECT
         s.year,
         COUNT(*) AS team_count,
+        AVG(s.win_pct) AS win_pct,
         AVG(ts.avg_rush_yards_game) AS avg_rush_yards_game,
         AVG(ts.avg_pass_yards_game) AS avg_pass_yards_game,
-        AVG(ts.avg_yards_game) AS avg_total_yards_game,
+        AVG(ts.avg_yards_game) AS avg_yards_game,
         AVG(ts.avg_yards_play) AS avg_yards_play,
         AVG(ts.tds_scored) AS avg_tds_scored,
-        AVG(ts.third_down_conv) AS avg_third_down_conv,
-        AVG(ts.fourth_down_conv) AS avg_fourth_down_conv,
-        AVG(ts.avg_penalty_yards_game) AS avg_penalty_yards_game,
-        AVG(os.opp_avg_yards_play) AS avg_opp_yards_play,
-        AVG(os.opp_avg_yards_game) AS avg_opp_yards_game,
+        AVG(os.opp_avg_yards_game) AS opp_avg_yards_game,
+        AVG(os.opp_avg_yards_play) AS opp_avg_yards_play,
         AVG(os.opp_tds_scored) AS avg_opp_tds_scored
     FROM seasons s
     JOIN team_stats ts ON s.season_id = ts.season_id
