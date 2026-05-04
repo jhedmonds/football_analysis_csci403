@@ -19,11 +19,11 @@ WORK SPLIT CHECKLIST
 ============================================================
 
 Baylor — Data Pipeline + Database
-[ ] Finish/verify the 4 raw Excel files in data/raw/
-[ ] Move scraper code into football_stats_scraper/
-[ ] Create python/combine_data.py !!
-[ ] Generate data/cleaned/football_stats_combined.csv
-[ ] Add/verify wins, losses, win_pct !!
+[X] Finish/verify the 4 raw Excel files in data/raw/
+[X] Move scraper code into football_stats_scraper/
+[X] Create python/combine_data.py
+[X] Generate data/cleaned/football_stats_combined.csv
+[X] Add/verify wins, losses, win_pct
 [ ] Create SQL schema in sql/01_create_schema.sql
 [ ] Create SQL loading script in sql/02_load_data.sql
 [ ] Create SQL cleaning/validation script in sql/03_clean_data.sql
