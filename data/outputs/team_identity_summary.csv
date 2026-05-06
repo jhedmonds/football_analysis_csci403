@@ -1,0 +1,5 @@
+team_name,seasons_analyzed,avg_win_pct,avg_efficiency_differential,avg_scoring_efficiency,avg_balance_score,avg_td_differential,avg_discipline_score,successful_seasons,successful_season_rate
+Colorado Mines,10,0.7856,1.540,0.1497,0.1768,39.00,115.20,8,0.8000
+CSU Pueblo,10,0.7633,1.780,0.1380,0.2224,28.70,128.00,8,0.8000
+Colorado Mesa,10,0.6496,0.850,0.1152,0.1248,12.00,119.80,4,0.4000
+Western Colorado,10,0.5646,0.250,0.1174,0.1630,9.30,109.20,4,0.4000

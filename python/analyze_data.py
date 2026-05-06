@@ -2,179 +2,208 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# creating paths to directories
+# ------------------------------------------------------------
+# Paths
+# ------------------------------------------------------------
 OUTPUT_DIR = Path("data/outputs")
-CLEANED_DIR = Path("data/cleaned")
 FIGURE_DIR = Path("figures")
 FIGURE_DIR.mkdir(exist_ok=True)
 
-correlation_file = OUTPUT_DIR / "stat_win_correlation.csv"
-trends_file = OUTPUT_DIR / "game_trends_2015_2025.csv"
-cleaned_file = CLEANED_DIR / "football_stats_combined.csv"
-
-
-# ------------------------------------------------------------
-# Graph 1: Top 10 stats correlated with winning
-# ------------------------------------------------------------
-if not correlation_file.exists():
-    print("Missing stat_win_correlation.csv. Waiting on SQL output.")
-else:
-    corr = pd.read_csv(correlation_file)
-
-    top_corr = corr.head(10).copy()
-    top_corr = top_corr.sort_values("abs_correlation")
-
-    plt.figure(figsize=(10, 6))
-    plt.barh(top_corr["stat_name"], top_corr["abs_correlation"])
-    plt.xlabel("Absolute Correlation with Win Percentage")
-    plt.ylabel("Statistic")
-    plt.title("Top Stats Correlated with Winning")
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
-    plt.savefig(FIGURE_DIR / "top_stats_correlated_with_winning.png", dpi=300)
-    plt.close()
-
-    # ------------------------------------------------------------
-    # Graph 2: Top 5 stats correlated with winning
-    # ------------------------------------------------------------
-    top_5 = corr.head(5).copy()
-    top_5 = top_5.sort_values("abs_correlation")
-
-    plt.figure(figsize=(9, 5))
-    plt.barh(top_5["stat_name"], top_5["abs_correlation"])
-    plt.xlabel("Absolute Correlation with Win Percentage")
-    plt.ylabel("Statistic")
-    plt.title("Top 5 Stats Correlated with Winning")
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
-    plt.savefig(FIGURE_DIR / "top_5_stats_correlated_with_winning.png", dpi=300)
-    plt.close()
-
+advanced_metrics_file = OUTPUT_DIR / "advanced_team_metrics.csv"
+team_summary_file = OUTPUT_DIR / "team_identity_summary.csv"
+threshold_file = OUTPUT_DIR / "efficiency_threshold_analysis.csv"
 
 # ------------------------------------------------------------
-# Graph 3: Rush vs pass yards over time
+# Load data
 # ------------------------------------------------------------
-if not trends_file.exists():
-    print("Missing game_trends_2015_2025.csv. Waiting on SQL output.")
-else:
-    trends = pd.read_csv(trends_file)
+advanced = pd.read_csv(advanced_metrics_file)
+summary = pd.read_csv(team_summary_file)
+thresholds = pd.read_csv(threshold_file)
 
-    plt.figure(figsize=(10, 6))
+# ------------------------------------------------------------
+# Graph 1:
+# Efficiency Differential vs Win Percentage
+# ------------------------------------------------------------
+plt.figure(figsize=(9, 6))
+
+for team in advanced["team_name"].unique():
+    team_df = advanced[advanced["team_name"] == team]
+
+    plt.scatter(
+        team_df["efficiency_differential"],
+        team_df["win_pct"],
+        s=90,
+        alpha=0.85,
+        label=team,
+        edgecolors="black"
+    )
+
+plt.xlabel("Efficiency Differential (Team YPP - Opponent YPP)")
+plt.ylabel("Win Percentage")
+plt.title("Efficiency Differential vs Winning")
+plt.grid(True, linestyle="--", alpha=0.4)
+plt.legend()
+plt.tight_layout()
+
+plt.savefig(
+    FIGURE_DIR / "efficiency_differential_vs_winning.png",
+    dpi=300
+)
+
+plt.close()
+
+# ------------------------------------------------------------
+# Graph 2:
+# Offensive Identity vs Average Win Percentage
+# ------------------------------------------------------------
+identity_summary = (
+    advanced.groupby("offensive_identity")["win_pct"]
+    .mean()
+    .sort_values()
+)
+
+plt.figure(figsize=(8, 6))
+
+plt.bar(
+    identity_summary.index,
+    identity_summary.values
+)
+
+plt.ylabel("Average Win Percentage")
+plt.xlabel("Offensive Identity")
+plt.title("Offensive Identity vs Winning")
+plt.grid(True, linestyle="--", alpha=0.4)
+
+plt.tight_layout()
+
+plt.savefig(
+    FIGURE_DIR / "offensive_identity_vs_winning.png",
+    dpi=300
+)
+
+plt.close()
+
+# ------------------------------------------------------------
+# Graph 3:
+# Team Efficiency Differential Over Time
+# ------------------------------------------------------------
+plt.figure(figsize=(10, 6))
+
+for team in advanced["team_name"].unique():
+    team_df = advanced[advanced["team_name"] == team]
+
     plt.plot(
-        trends["year"],
-        trends["avg_rush_yards_game"],
+        team_df["year"],
+        team_df["efficiency_differential"],
         marker="o",
-        label="Rush Yards/Game",
+        linewidth=2,
+        label=team
     )
-    plt.plot(
-        trends["year"],
-        trends["avg_pass_yards_game"],
-        marker="o",
-        label="Pass Yards/Game",
-    )
-    plt.xlabel("Year")
-    plt.ylabel("Yards per Game")
-    plt.title("Rush vs Pass Yards Over Time")
-    plt.legend()
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
-    plt.savefig(FIGURE_DIR / "rush_vs_pass_yards_over_time.png", dpi=300)
-    plt.close()
 
+plt.axhline(
+    y=1.0,
+    linestyle="--",
+    linewidth=1.5
+)
+
+plt.xlabel("Year")
+plt.ylabel("Efficiency Differential")
+plt.title("Program Efficiency Differential Over Time")
+plt.grid(True, linestyle="--", alpha=0.4)
+plt.legend()
+
+plt.tight_layout()
+
+plt.savefig(
+    FIGURE_DIR / "efficiency_differential_over_time.png",
+    dpi=300
+)
+
+plt.close()
 
 # ------------------------------------------------------------
-# Graphs based on cleaned team-season data
+# Graph 4:
+# Threshold Success Rates
 # ------------------------------------------------------------
-if not cleaned_file.exists():
-    print("Missing football_stats_combined.csv. Run combine_data.py first.")
-else:
-    df = pd.read_csv(cleaned_file)
+threshold_plot = thresholds.copy()
 
-    # ------------------------------------------------------------
-    # Graph 4: Win percentage vs offensive efficiency
-    # ------------------------------------------------------------
-    plt.figure(figsize=(8, 6))
-    plt.scatter(
-        df["avg_yards_play"],
-        df["win_pct"],
-        alpha=0.85,
-        s=70,
-        edgecolors="black",
-    )
-    plt.xlabel("Average Yards per Play")
-    plt.ylabel("Win Percentage")
-    plt.title("Win Percentage vs Offensive Efficiency")
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
-    plt.savefig(FIGURE_DIR / "winpct_vs_yards_per_play.png", dpi=300)
-    plt.close()
+plt.figure(figsize=(12, 6))
 
-    # ------------------------------------------------------------
-    # Graph 5: Offense vs defense comparison, colored by win %
-    # ------------------------------------------------------------
-    plt.figure(figsize=(10, 6))
+plt.bar(
+    threshold_plot["threshold_group"],
+    threshold_plot["success_rate"]
+)
 
-    scatter = plt.scatter(
-        df["avg_yards_game"],
-        df["opp_avg_yards_game"],
-        c=df["win_pct"],
-        cmap="RdYlGn",
-        edgecolors="black",
-        alpha=0.85,
-        s=70,
-    )
+plt.xticks(rotation=15)
+plt.ylabel("Successful Season Rate")
+plt.xlabel("Threshold Group")
+plt.title("Football Performance Thresholds and Success")
 
-    plt.xlabel("Team Yards per Game")
-    plt.ylabel("Opponent Yards per Game")
-    plt.title("Offense vs Defense: Yards per Game (Colored by Win %)")
+plt.grid(True, linestyle="--", alpha=0.4)
 
-    cbar = plt.colorbar(scatter)
-    cbar.set_label("Win Percentage")
+plt.tight_layout()
 
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
-    plt.savefig(FIGURE_DIR / "offense_vs_defense_yards_game.png", dpi=300)
-    plt.close()
+plt.savefig(
+    FIGURE_DIR / "threshold_success_rates.png",
+    dpi=300
+)
 
-    # ------------------------------------------------------------
-    # Graph 6: Touchdowns vs winning
-    # ------------------------------------------------------------
-    plt.figure(figsize=(8, 6))
-    plt.scatter(
-        df["tds_scored"],
-        df["win_pct"],
-        alpha=0.85,
-        s=70,
-        edgecolors="black",
-    )
-    plt.xlabel("Touchdowns Scored")
-    plt.ylabel("Win Percentage")
-    plt.title("Touchdowns Scored vs Win Percentage")
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
-    plt.savefig(FIGURE_DIR / "tds_scored_vs_winning.png", dpi=300)
-    plt.close()
+plt.close()
 
-    # ------------------------------------------------------------
-    # Graph 7: Scoring efficiency vs winning
-    # ------------------------------------------------------------
-    df["tds_per_100_yards"] = (df["tds_scored"] / df["avg_yards_game"]) * 100
+# ------------------------------------------------------------
+# Graph 5:
+# Team Identity Heatmap
+# ------------------------------------------------------------
+heatmap_metrics = summary[
+    [
+        "team_name",
+        "avg_win_pct",
+        "avg_efficiency_differential",
+        "avg_scoring_efficiency",
+        "avg_td_differential",
+        "avg_balance_score",
+        "avg_discipline_score"
+    ]
+].copy()
 
-    plt.figure(figsize=(8, 6))
-    plt.scatter(
-        df["tds_per_100_yards"],
-        df["win_pct"],
-        alpha=0.85,
-        s=70,
-        edgecolors="black",
-    )
-    plt.xlabel("Touchdowns per 100 Yards")
-    plt.ylabel("Win Percentage")
-    plt.title("Scoring Efficiency vs Win Percentage")
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
-    plt.savefig(FIGURE_DIR / "scoring_efficiency_vs_winning.png", dpi=300)
-    plt.close()
+heatmap_metrics = heatmap_metrics.set_index("team_name")
 
+# normalize columns independently
+heatmap_normalized = (
+    heatmap_metrics - heatmap_metrics.min()
+) / (
+    heatmap_metrics.max() - heatmap_metrics.min()
+)
 
-print("Finished creating figures.")
+plt.figure(figsize=(10, 6))
+
+plt.imshow(
+    heatmap_normalized,
+    aspect="auto"
+)
+
+plt.colorbar(label="Relative Strength")
+
+plt.xticks(
+    range(len(heatmap_normalized.columns)),
+    heatmap_normalized.columns,
+    rotation=20
+)
+
+plt.yticks(
+    range(len(heatmap_normalized.index)),
+    heatmap_normalized.index
+)
+
+plt.title("Program Identity Heatmap")
+
+plt.tight_layout()
+
+plt.savefig(
+    FIGURE_DIR / "program_identity_heatmap.png",
+    dpi=300
+)
+
+plt.close()
+
+print("Finished creating advanced football analytics figures.")
