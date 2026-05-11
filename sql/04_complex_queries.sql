@@ -4,12 +4,7 @@ DROP VIEW IF EXISTS advanced_team_metrics;
 DROP VIEW IF EXISTS team_identity_summary;
 DROP VIEW IF EXISTS efficiency_threshold_analysis;
 
--- ============================================================
--- View 1: Advanced team-season football metrics
--- Purpose:
--- Creates one reusable analytics layer with derived football
--- identity metrics instead of relying only on raw box score stats.
--- ============================================================
+
 CREATE VIEW advanced_team_metrics AS
 SELECT
     tm.team_name,
@@ -90,12 +85,6 @@ JOIN team_stats ts ON s.season_id = ts.season_id
 JOIN opponent_stats os ON s.season_id = os.season_id;
 
 
--- ============================================================
--- View 2: Team identity summary
--- Purpose:
--- Compares long-term program identity instead of only looking
--- at single-season raw stats.
--- ============================================================
 CREATE VIEW team_identity_summary AS
 SELECT
     team_name,
@@ -120,12 +109,6 @@ GROUP BY team_name
 ORDER BY avg_win_pct DESC;
 
 
--- ============================================================
--- View 3: Efficiency threshold analysis
--- Purpose:
--- Tests whether crossing certain football thresholds leads
--- to better season outcomes.
--- ============================================================
 CREATE VIEW efficiency_threshold_analysis AS
 WITH threshold_flags AS (
     SELECT

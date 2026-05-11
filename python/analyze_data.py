@@ -2,9 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# ------------------------------------------------------------
 # Paths
-# ------------------------------------------------------------
 OUTPUT_DIR = Path("data/outputs")
 FIGURE_DIR = Path("figures")
 FIGURE_DIR.mkdir(exist_ok=True)
@@ -13,17 +11,12 @@ advanced_metrics_file = OUTPUT_DIR / "advanced_team_metrics.csv"
 team_summary_file = OUTPUT_DIR / "team_identity_summary.csv"
 threshold_file = OUTPUT_DIR / "efficiency_threshold_analysis.csv"
 
-# ------------------------------------------------------------
 # Load data
-# ------------------------------------------------------------
 advanced = pd.read_csv(advanced_metrics_file)
 summary = pd.read_csv(team_summary_file)
 thresholds = pd.read_csv(threshold_file)
 
-# ------------------------------------------------------------
-# Graph 1:
-# Efficiency Differential vs Win Percentage
-# ------------------------------------------------------------
+# Graph 1:Efficiency Differential vs Win Percentage
 plt.figure(figsize=(9, 6))
 
 for team in advanced["team_name"].unique():
@@ -52,10 +45,7 @@ plt.savefig(
 
 plt.close()
 
-# ------------------------------------------------------------
-# Graph 2:
-# Offensive Identity vs Average Win Percentage
-# ------------------------------------------------------------
+# Graph 2: Offensive Identity vs Average Win Percentage
 identity_summary = (
     advanced.groupby("offensive_identity")["win_pct"]
     .mean()
@@ -83,10 +73,8 @@ plt.savefig(
 
 plt.close()
 
-# ------------------------------------------------------------
-# Graph 3:
-# Team Efficiency Differential Over Time
-# ------------------------------------------------------------
+
+# Graph 3: Team Efficiency Differential Over Time
 plt.figure(figsize=(10, 6))
 
 for team in advanced["team_name"].unique():
@@ -121,10 +109,7 @@ plt.savefig(
 
 plt.close()
 
-# ------------------------------------------------------------
-# Graph 4:
-# Threshold Success Rates
-# ------------------------------------------------------------
+# Graph 4: Threshold Success Rates
 threshold_plot = thresholds.copy()
 
 plt.figure(figsize=(12, 6))
@@ -150,10 +135,7 @@ plt.savefig(
 
 plt.close()
 
-# ------------------------------------------------------------
-# Graph 5:
-# Team Identity Heatmap
-# ------------------------------------------------------------
+# Graph 5: Team Identity Heatmap
 heatmap_metrics = summary[
     [
         "team_name",
